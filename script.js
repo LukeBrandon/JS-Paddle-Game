@@ -72,9 +72,9 @@ function drawBricks(){
                 bricksRemaining--;
             }
 
+            //actually draw the bricks
             ctx.beginPath();
-            //only draw if it hasn't been hit
-            if(bricks[c][r].status == 1)ctx.rect(brickX, brickY, brickWidth, brickHeight);
+            if(bricks[c][r].status == 1)ctx.rect(brickX, brickY, brickWidth, brickHeight);  //only draw if it hasnt been hit
             ctx.fillStyle = "#0095DD";
             ctx.fill();
             ctx.closePath();
@@ -86,11 +86,11 @@ function drawBricks(){
 function collisionDetection(x, y, status){
     if(ballX +ballRadius < x)    //left
         return false;
-    else if(ballX > x+brickWidth)
+    else if(ballX > x+brickWidth)   //right
         return false;
-    else if(ballY> y + brickHeight)
+    else if(ballY> y + brickHeight) //below
         return false;
-    else if(ballY < y)
+    else if(ballY < y)  //above
         return false;
     return true;
 }
@@ -116,6 +116,13 @@ function keyUpHandler(e) {
     }
 }
 
+//------------Game methods------------------
+function checkGameOver(){
+    if(bricksRemaining = 0)
+        console.log("Congrats. You won!");
+    if(ballY + ballRadius > canvas.height)
+        console.log("You Lose.");
+}
 
 //----------------Draw Method-------------------
 function draw() {
@@ -130,12 +137,7 @@ function draw() {
     if(ballY < 0+ballRadius || ballY + ballRadius > canvas.height)
         dy *= -1;
 
-    //Ball hits bottom, you lose
-    if(ballY + ballRadius > canvas.height){
-        // alert("GAME OVER");
-        // document.location.reload();
-        console.log("You Lose.");
-    }
+    checkGameOver();
 
     //Collision with paddle
     if(ballX+ballRadius <= paddleX+paddleWidth && ballX+ballRadius >= paddleX  && ballY + ballRadius > canvas.height - paddleY)    //collides if in between the two sides of paddle and is inside paddle
@@ -148,9 +150,9 @@ function draw() {
     if(leftPressed && paddleX > 0)
         paddleX -= paddleSpeed;
 
-
-        ballX += dx;
-        ballY += dy;
+    //move ball
+    ballX += dx;
+    ballY += dy;
 }
 
 setInterval(draw, 10);
