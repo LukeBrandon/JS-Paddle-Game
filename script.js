@@ -21,12 +21,13 @@ var brickHeight = 20;
 var brickPadding = 10;
 var brickOffsetTop = 30;
 var brickOffsetLeft = 30;
+var brickGotHit = false;
 //initialize bricks
 var bricks = [];
 for(var c=0; c<brickColumnCount; c++) {
     bricks[c] = [];
     for(var r=0; r<brickRowCount; r++) {
-        bricks[c][r] = { x: 0, y: 0 };
+        bricks[c][r] = { x: 0, y: 0 , status: 1};
     }
 }
 
@@ -60,8 +61,11 @@ function drawBricks(){
             var brickY = (r*(brickHeight+brickPadding)) + brickOffsetTop;
             bricks[c][r].x = brickX;
             bricks[c][r].y = brickY;
+            bricks[c][r].status = 1;
+            if(brickGotHit)
+                bricks[c][r].status = 0;
             ctx.beginPath();
-            ctx.rect(brickX, brickY, brickWidth, brickHeight);
+            if(bricks[c][r].status == 1)ctx.rect(brickX, brickY, brickWidth, brickHeight);
             ctx.fillStyle = "#0095DD";
             ctx.fill();
             ctx.closePath();
