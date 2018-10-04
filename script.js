@@ -22,6 +22,7 @@ var brickPadding = 10;
 var brickOffsetTop = 30;
 var brickOffsetLeft = 30;
 var brickGotHit = false;
+var bricksRemaining = brickRowCount * brickColumnCount;
 //initialize bricks
 var bricks = [];
 for(var c=0; c<brickColumnCount; c++) {
@@ -63,13 +64,13 @@ function drawBricks(){
             var brickY = (r*(brickHeight+brickPadding)) + brickOffsetTop;
             bricks[c][r].x = brickX;
             bricks[c][r].y = brickY;
-
+            bricks[c][r].status = 1;
             //if bricks has been hit then don't draw it
             brickGotHit = collisionDetection(bricks[c][r].x, bricks[c][r].y, bricks[c][r].status);
-            if(brickGotHit)
+            if(brickGotHit){
                 bricks[c][r].status = 0;
-            else
-            bricks[c][r].status = 1;
+                bricksRemaining--;
+            }
 
             ctx.beginPath();
             //only draw if it hasn't been hit
@@ -133,7 +134,7 @@ function draw() {
     if(ballY + ballRadius > canvas.height){
         // alert("GAME OVER");
         // document.location.reload();
-
+        console.log("You Lose.");
     }
 
     //Collision with paddle
