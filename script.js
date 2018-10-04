@@ -57,20 +57,41 @@ function drawPaddle() {
 function drawBricks(){
     for(var c=0; c<brickColumnCount; c++) {
         for(var r=0; r<brickRowCount; r++) {
+            if(bricks[c][r].status == 1){
+            //drawing bricks
             var brickX = (c*(brickWidth+brickPadding)) + brickOffsetLeft
             var brickY = (r*(brickHeight+brickPadding)) + brickOffsetTop;
             bricks[c][r].x = brickX;
             bricks[c][r].y = brickY;
-            bricks[c][r].status = 1;
+
+            //if bricks has been hit then don't draw it
+            brickGotHit = collisionDetection(bricks[c][r].x, bricks[c][r].y, bricks[c][r].status);
             if(brickGotHit)
                 bricks[c][r].status = 0;
+            else
+            bricks[c][r].status = 1;
+
             ctx.beginPath();
+            //only draw if it hasn't been hit
             if(bricks[c][r].status == 1)ctx.rect(brickX, brickY, brickWidth, brickHeight);
             ctx.fillStyle = "#0095DD";
             ctx.fill();
             ctx.closePath();
+            }
         }
     }
+}
+
+function collisionDetection(x, y, status){
+    if(ballX +ballRadius < x)    //left
+        return false;
+    else if(ballX > x+brickWidth)
+        return false;
+    else if(ballY> y + brickHeight)
+        return false;
+    else if(ballY < y)
+        return false;
+    return true;
 }
 
    
