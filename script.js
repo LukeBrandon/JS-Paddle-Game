@@ -38,8 +38,9 @@ function move(){
     else if(rightPressed){
         paddleX -= paddleSpeed;
     }
-    else {}
+    else {
         //no movement to be done
+    }
 }
    
 function keyDownHandler(e) {
