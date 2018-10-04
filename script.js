@@ -1,48 +1,76 @@
 var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
-var x = canvas.width/2;
-var y = canvas.height-30;
+var ballRadius = 10;
+var ballX = canvas.width/2;
+var ballY = canvas.height-40;
 var dx = 2;
 var dy = -2;
-var ballRadius = 10;
-var paddleX = canvas.width/2 - paddleWidth/2;
-var paddleWidth = 50;
 var paddleHeight = 10;
+var paddleWidth = 75;
 var paddleSpeed = 5;
-var direction = "";
+var paddleX = (canvas.width-paddleWidth)/2;
+var paddleY = paddleHeight -5;
+var rightPressed = false;
+var leftPressed = false;
+
+//brick variables
+var brickRowCount = 3;
+var brickColumnCount = 5;
+var brickWidth = 75;
+var brickHeight = 20;
+var brickPadding = 10;
+var brickOffsetTop = 30;
+var brickOffsetLeft = 30;
+//initialize bricks
+var bricks = [];
+for(var c=0; c<brickColumnCount; c++) {
+    bricks[c] = [];
+    for(var r=0; r<brickRowCount; r++) {
+        bricks[c][r] = { x: 0, y: 0 };
+    }
+}
+
 
 //key listener for paddle control
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 
+
+//-----------Individual Draw Methods-----------------
 function drawBall() {
     ctx.beginPath();
-    ctx.arc(x, y, ballRadius, 0, Math.PI*2);
+    ctx.arc(ballX, ballY, ballRadius, 0, Math.PI*2);
     ctx.fillStyle = "#0095DD";
     ctx.fill();
     ctx.closePath();
 }
 
-function drawPaddle(){
+function drawPaddle() {
     ctx.beginPath();
-    ctx.rect(paddleX, canvas.height-paddleHeight, paddleWidth, paddleHeight);
+    ctx.rect(paddleX, canvas.height-paddleY, paddleWidth, paddleHeight-15);
     ctx.fillStyle = "#0095DD";
     ctx.fill();
     ctx.closePath();
 }
 
-function move(){
-    if(leftPressed){
-        paddleX += paddleSpeed;
-    }
-    else if(rightPressed){
-        paddleX -= paddleSpeed;
-    }
-    else {
-        //no movement to be done
+function drawBricks(){
+    for(var c=0; c<brickColumnCount; c++) {
+        for(var r=0; r<brickRowCount; r++) {
+            var brickX = (c*(brickWidth+brickPadding)) + brickOffsetLeft
+            var brickY = (r*(brickHeight+brickPadding)) + brickOffsetTop;
+            bricks[c][r].x = brickX;
+            bricks[c][r].y = brickY;
+            ctx.beginPath();
+            ctx.rect(brickX, brickY, brickWidth, brickHeight);
+            ctx.fillStyle = "#0095DD";
+            ctx.fill();
+            ctx.closePath();
+        }
     }
 }
+
    
+//------------Key event Methods------------------
 function keyDownHandler(e) {
     //37 is key code for right key
     if(e.keyCode == 39) {
@@ -52,6 +80,7 @@ function keyDownHandler(e) {
         leftPressed = true;
     }
 }
+
 function keyUpHandler(e) {
     if(e.keyCode == 39) {
         rightPressed = false;
@@ -62,19 +91,40 @@ function keyUpHandler(e) {
 }
 
 
+//----------------Draw Method-------------------
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawBall();
     drawPaddle();
+    drawBricks();
 
     //ball collides and bounces off
-    if(x+ballRadius > canvas.width || x < 0+ballRadius)
+    if(ballX+ballRadius > canvas.width || ballX < 0+ballRadius)
         dx *= -1;
-    if(y < 0+ballRadius || y+ballRadius > canvas.height)
+    if(ballY < 0+ballRadius || ballY + ballRadius > canvas.height)
         dy *= -1;
+
+    //Ball hits bottom, you lose
+    if(ballY + ballRadius > canvas.height){
+        // alert("GAME OVER");
+        // document.location.reload();
+
+    }
+
+    //Collision with paddle
+    if(ballX+ballRadius <= paddleX+paddleWidth && ballX+ballRadius >= paddleX  && ballY + ballRadius > canvas.height - paddleY)    //collides if in between the two sides of paddle and is inside paddle
+        dy*=-1;
+
     
-        x += dx;
-        y += dy;
+    //if the arrow key sare pressed move the paddle
+    if(rightPressed && paddleX + paddleWidth < canvas.width)
+        paddleX += paddleSpeed;
+    if(leftPressed && paddleX > 0)
+        paddleX -= paddleSpeed;
+
+
+        ballX += dx;
+        ballY += dy;
 }
 
 setInterval(draw, 10);
