@@ -3,6 +3,8 @@ var ctx = canvas.getContext("2d");
 var ballRadius = 10;
 var ballX = canvas.width/2;
 var ballY = canvas.height-40;
+var prevX = ballX;
+var prevY = ballY;
 var dx = 2;
 var dy = -2;
 var paddleHeight = 10;
@@ -66,10 +68,11 @@ function drawBricks(){
             bricks[c][r].y = brickY;
             bricks[c][r].status = 1;
             //if bricks has been hit then don't draw it
-            brickGotHit = collisionDetection(bricks[c][r].x, bricks[c][r].y, bricks[c][r].status);
+            brickGotHit = collisionDetection(bricks[c][r].x, bricks[c][r].y);
             if(brickGotHit){
                 bricks[c][r].status = 0;
                 bricksRemaining--;
+                bounceOffBrick(bricks[c][r].x, bricks[c][r].y);
             }
 
             //actually draw the bricks
@@ -83,7 +86,7 @@ function drawBricks(){
     }
 }
 
-function collisionDetection(x, y, status){
+function collisionDetection(x, y){
     if(ballX +ballRadius < x)    //left
         return false;
     else if(ballX > x+brickWidth)   //right
@@ -93,6 +96,29 @@ function collisionDetection(x, y, status){
     else if(ballY < y)  //above
         return false;
     return true;
+}
+
+function bounceOffBrick(x, y, status){
+    //entering from top
+    if(ballY + ballRadius >= x && !(prevY + ballRadius > y)){  
+        dy = -dy;
+    //entering from bottom
+    }else if(ballY <= y + brickHeight && !(prevY < y + brickHeight)){ 
+        dy = -dy;
+    //entering from left
+    }else if(ballX + ballRadius >= x && !(prevX + brickWidth > x) ){
+        dx = -dx;
+    //entering from right
+    }else if(ballX <= (x + brickWidth) && !(prevX < x + brickWidth) ){ 
+        dx=-dx;
+    }else{
+       console.log("Didn't meet any of the directional conditions");
+    }
+}
+
+function setPrev(){
+    prevX = ballX;
+    prevY = ballY;
 }
 
    
@@ -134,7 +160,7 @@ function draw() {
     //ball collides and bounces off
     if(ballX+ballRadius > canvas.width || ballX < 0+ballRadius)
         dx *= -1;
-    if(ballY < 0+ballRadius || ballY + ballRadius > canvas.height)
+    if(ballY < 0+ballRadius /*|| ballY + ballRadius > canvas.height*/)
         dy *= -1;
 
     checkGameOver();
@@ -151,6 +177,7 @@ function draw() {
         paddleX -= paddleSpeed;
 
     //move ball
+    setPrev();
     ballX += dx;
     ballY += dy;
 }
