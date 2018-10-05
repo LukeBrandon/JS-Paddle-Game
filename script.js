@@ -62,6 +62,7 @@ function drawBricks(){
             bricks[c][r].x = brickX;
             bricks[c][r].y = brickY;
             bricks[c][r].status = 1;
+            brickGotHit = collisionDetection(bricks[c][r]);
             if(brickGotHit)
                 bricks[c][r].status = 0;
             ctx.beginPath();
@@ -71,6 +72,10 @@ function drawBricks(){
             ctx.closePath();
         }
     }
+}
+
+function collisionDetection(bricks[c][r]){
+    if()
 }
 
    
