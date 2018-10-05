@@ -15,9 +15,11 @@ var paddleY = paddleHeight -5;
 var rightPressed = false;
 var leftPressed = false;
 
+var score = 0;
+
 //brick variables
 var brickRowCount = 3;
-var brickColumnCount = 5;
+var brickColumnCount = 6;
 var brickWidth = 75;
 var brickHeight = 20;
 var brickPadding = 10;
@@ -57,6 +59,12 @@ function drawPaddle() {
     ctx.closePath();
 }
 
+function drawScore(){
+    ctx.font = "16px Arial";
+    ctx.fillStyle = " #0095DD"
+    ctx.fillText("Score: " + score, 8,20);
+}
+
 function drawBricks(){
     for(var c=0; c<brickColumnCount; c++) {
         for(var r=0; r<brickRowCount; r++) {
@@ -71,7 +79,9 @@ function drawBricks(){
             brickGotHit = collisionDetection(bricks[c][r].x, bricks[c][r].y);
             if(brickGotHit){
                 bricks[c][r].status = 0;
+                score++;
                 bricksRemaining--;
+                console.log("collides with brick c:" + c + " r: "+ r);
                 bounceOffBrick(bricks[c][r].x, bricks[c][r].y);
             }
 
@@ -144,18 +154,22 @@ function keyUpHandler(e) {
 
 //------------Game methods------------------
 function checkGameOver(){
-    if(bricksRemaining = 0)
-        console.log("Congrats. You won!");
-    if(ballY + ballRadius > canvas.height)
-        console.log("You Lose.");
+    if(bricksRemaining==0){
+        alert("YOU WIN, CONGRATULATIONS!");
+        document.location.reload();
+    }
+    if(ballY + ballRadius > canvas.height){
+        alert("YOU LOSE!");
+        document.location.reload();
+    }
 }
-
 //----------------Draw Method-------------------
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawBall();
     drawPaddle();
     drawBricks();
+    drawScore();
 
     //ball collides and bounces off
     if(ballX+ballRadius > canvas.width || ballX < 0+ballRadius)
