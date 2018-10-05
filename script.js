@@ -22,6 +22,7 @@ var brickPadding = 10;
 var brickOffsetTop = 30;
 var brickOffsetLeft = 30;
 var brickGotHit = false;
+var bricksRemaining = brickRowCount * brickColumnCount;
 //initialize bricks
 var bricks = [];
 for(var c=0; c<brickColumnCount; c++) {
@@ -57,25 +58,41 @@ function drawPaddle() {
 function drawBricks(){
     for(var c=0; c<brickColumnCount; c++) {
         for(var r=0; r<brickRowCount; r++) {
+            if(bricks[c][r].status == 1){
+            //drawing bricks
             var brickX = (c*(brickWidth+brickPadding)) + brickOffsetLeft
             var brickY = (r*(brickHeight+brickPadding)) + brickOffsetTop;
             bricks[c][r].x = brickX;
             bricks[c][r].y = brickY;
             bricks[c][r].status = 1;
-            brickGotHit = collisionDetection(bricks[c][r]);
-            if(brickGotHit)
+            //if bricks has been hit then don't draw it
+            brickGotHit = collisionDetection(bricks[c][r].x, bricks[c][r].y, bricks[c][r].status);
+            if(brickGotHit){
                 bricks[c][r].status = 0;
+                bricksRemaining--;
+            }
+
+            //actually draw the bricks
             ctx.beginPath();
-            if(bricks[c][r].status == 1)ctx.rect(brickX, brickY, brickWidth, brickHeight);
+            if(bricks[c][r].status == 1)ctx.rect(brickX, brickY, brickWidth, brickHeight);  //only draw if it hasnt been hit
             ctx.fillStyle = "#0095DD";
             ctx.fill();
             ctx.closePath();
+            }
         }
     }
 }
 
-function collisionDetection(bricks[c][r]){
-    if()
+function collisionDetection(x, y, status){
+    if(ballX +ballRadius < x)    //left
+        return false;
+    else if(ballX > x+brickWidth)   //right
+        return false;
+    else if(ballY> y + brickHeight) //below
+        return false;
+    else if(ballY < y)  //above
+        return false;
+    return true;
 }
 
    
@@ -99,6 +116,13 @@ function keyUpHandler(e) {
     }
 }
 
+//------------Game methods------------------
+function checkGameOver(){
+    if(bricksRemaining = 0)
+        console.log("Congrats. You won!");
+    if(ballY + ballRadius > canvas.height)
+        console.log("You Lose.");
+}
 
 //----------------Draw Method-------------------
 function draw() {
@@ -113,12 +137,7 @@ function draw() {
     if(ballY < 0+ballRadius || ballY + ballRadius > canvas.height)
         dy *= -1;
 
-    //Ball hits bottom, you lose
-    if(ballY + ballRadius > canvas.height){
-        // alert("GAME OVER");
-        // document.location.reload();
-
-    }
+    checkGameOver();
 
     //Collision with paddle
     if(ballX+ballRadius <= paddleX+paddleWidth && ballX+ballRadius >= paddleX  && ballY + ballRadius > canvas.height - paddleY)    //collides if in between the two sides of paddle and is inside paddle
@@ -131,9 +150,9 @@ function draw() {
     if(leftPressed && paddleX > 0)
         paddleX -= paddleSpeed;
 
-
-        ballX += dx;
-        ballY += dy;
+    //move ball
+    ballX += dx;
+    ballY += dy;
 }
 
 setInterval(draw, 10);
