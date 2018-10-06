@@ -180,8 +180,13 @@ function draw() {
     checkGameOver();
 
     //Collision with paddle
-    if(ballX+ballRadius <= paddleX+paddleWidth && ballX+ballRadius >= paddleX  && ballY + ballRadius > canvas.height - paddleY)    //collides if in between the two sides of paddle and is inside paddle
+    if(ballX+ballRadius <= paddleX+paddleWidth && ballX+ballRadius >= paddleX  && ballY + ballRadius > canvas.height - paddleY){    //collides if in between the two sides of paddle and is inside paddle
         dy*=-1;
+        if(rightPressed)
+            dx += paddleSpeed/2;
+        if(leftPressed)
+            dx-= paddleSpeed/2;
+    }
 
     
     //if the arrow key sare pressed move the paddle
