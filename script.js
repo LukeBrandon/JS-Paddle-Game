@@ -158,21 +158,25 @@ function keyDownHandler(e) {
 }
 
 function keyUpHandler(e) {
-    if(e.keyCode == 39) {
+    if(e.keyCode == 39) 
         rightPressed = false;
-    }
-    else if(e.keyCode == 37) {
+    else if(e.keyCode == 37) 
         leftPressed = false;
-    }
 }
 
 
-//doesnt do anything
 function mouseMoveHandler(e) {
+    console.log("mouseMoveHandler");
     var relativeX = e.clientX - canvas.offsetLeft;
     if(relativeX > 0 && relativeX < canvas.width) {
+        setPrevPaddleX();
         paddleX = relativeX - paddleWidth/2;
+        setPaddleVelocity();
     }
+}
+
+function setPaddleVelocity(){
+    paddleVelocity = paddleX-prevPaddleX;
 }
 
 
@@ -189,10 +193,9 @@ function checkGameOver(){
 }
 //----------------Draw Method-------------------
 function draw() {
+    console.log("draw");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawBall();
-    setPrevPaddleX();
-    paddleVelocity = paddleX-prevPaddleX;
     //console.log("paddleX: " + paddleX);
     //console.log("prevPaddleX: " + prevPaddleX);
     console.log("paddleVelocity: " + paddleVelocity);
@@ -213,7 +216,7 @@ function draw() {
     if(ballX+ballRadius <= paddleX+paddleWidth && ballX+ballRadius >= paddleX  && ballY + ballRadius > canvas.height - paddleY){    //collides if in between the two sides of paddle and is inside paddle
         dy*=-1;
         //caculate paddle velocity 
-        dx += paddleVelocity;
+        dx += paddleVelocity/4;
     }
 
     
