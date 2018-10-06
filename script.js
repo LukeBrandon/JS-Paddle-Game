@@ -11,10 +11,13 @@ var paddleHeight = 10;
 var paddleWidth = 75;
 var paddleSpeed = 5;
 var paddleX = (canvas.width-paddleWidth)/2;
+var prevPaddleX = (canvas.width-paddleWidth)/2;
 var paddleY = paddleHeight -5;
+var paddleVelocity = prevPaddleX-paddleX;
 var rightPressed = false;
 var leftPressed = false;
 
+var lives = 3;
 var score = 0;
 
 //brick variables
@@ -40,6 +43,7 @@ for(var c=0; c<brickColumnCount; c++) {
 //key listener for paddle control
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
+document.addEventListener("mousemove", mouseMoveHandler, false);
 
 
 //-----------Individual Draw Methods-----------------
@@ -63,6 +67,12 @@ function drawScore(){
     ctx.font = "16px Arial";
     ctx.fillStyle = " #0095DD"
     ctx.fillText("Score: " + score, 8,20);
+}
+
+function drawLives(){
+    ctx.font = "16px Arial";
+    ctx.fillStyle = " #0095DD"
+    ctx.fillText("Lives: " + lives,80,20);
 }
 
 function drawBricks(){
@@ -131,8 +141,12 @@ function setPrev(){
     prevY = ballY;
 }
 
+function setPrevPaddleX(){
+    prevPaddleX = paddleX;
+}
+
    
-//------------Key event Methods------------------
+//------------Key Event and Mouse Event Methods------------------
 function keyDownHandler(e) {
     //37 is key code for right key
     if(e.keyCode == 39) {
@@ -152,6 +166,16 @@ function keyUpHandler(e) {
     }
 }
 
+
+//doesnt do anything
+function mouseMoveHandler(e) {
+    var relativeX = e.clientX - canvas.offsetLeft;
+    if(relativeX > 0 && relativeX < canvas.width) {
+        paddleX = relativeX - paddleWidth/2;
+    }
+}
+
+
 //------------Game methods------------------
 function checkGameOver(){
     if(bricksRemaining==0){
@@ -159,7 +183,7 @@ function checkGameOver(){
         document.location.reload();
     }
     if(ballY + ballRadius > canvas.height){
-        alert("YOU LOSE!");
+        lives --;
         document.location.reload();
     }
 }
@@ -167,9 +191,15 @@ function checkGameOver(){
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawBall();
+    setPrevPaddleX();
+    paddleVelocity = paddleX-prevPaddleX;
+    //console.log("paddleX: " + paddleX);
+    //console.log("prevPaddleX: " + prevPaddleX);
+    console.log("paddleVelocity: " + paddleVelocity);
     drawPaddle();
     drawBricks();
     drawScore();
+    drawLives();
 
     //ball collides and bounces off
     if(ballX+ballRadius > canvas.width || ballX < 0+ballRadius)
@@ -182,10 +212,8 @@ function draw() {
     //Collision with paddle
     if(ballX+ballRadius <= paddleX+paddleWidth && ballX+ballRadius >= paddleX  && ballY + ballRadius > canvas.height - paddleY){    //collides if in between the two sides of paddle and is inside paddle
         dy*=-1;
-        if(rightPressed)
-            dx += paddleSpeed/2;
-        if(leftPressed)
-            dx-= paddleSpeed/2;
+        //caculate paddle velocity 
+        dx += paddleVelocity;
     }
 
     
