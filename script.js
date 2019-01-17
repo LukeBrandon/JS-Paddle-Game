@@ -79,28 +79,29 @@ function drawBricks(){
     for(var c=0; c<brickColumnCount; c++) {
         for(var r=0; r<brickRowCount; r++) {
             if(bricks[c][r].status == 1){
-            //drawing bricks
-            var brickX = (c*(brickWidth+brickPadding)) + brickOffsetLeft
-            var brickY = (r*(brickHeight+brickPadding)) + brickOffsetTop;
-            bricks[c][r].x = brickX;
-            bricks[c][r].y = brickY;
-            bricks[c][r].status = 1;
-            //if bricks has been hit then don't draw it
-            brickGotHit = collisionDetection(bricks[c][r].x, bricks[c][r].y);
-            if(brickGotHit){
-                bricks[c][r].status = 0;
-                score++;
-                bricksRemaining--;
-                console.log("collides with brick c:" + c + " r: "+ r);
-                bounceOffBrick(bricks[c][r].x, bricks[c][r].y);
-            }
+                //drawing bricks if they are still existing
+                var brickX = (c*(brickWidth+brickPadding)) + brickOffsetLeft
+                var brickY = (r*(brickHeight+brickPadding)) + brickOffsetTop;
+                bricks[c][r].x = brickX;
+                bricks[c][r].y = brickY;
+                bricks[c][r].status = 1;
+                //if bricks has been hit then don't draw it
+                brickGotHit = collisionDetection(bricks[c][r].x, bricks[c][r].y);
 
-            //actually draw the bricks
-            ctx.beginPath();
-            if(bricks[c][r].status == 1)ctx.rect(brickX, brickY, brickWidth, brickHeight);  //only draw if it hasnt been hit
-            ctx.fillStyle = "#0095DD";
-            ctx.fill();
-            ctx.closePath();
+                if(brickGotHit){
+                    bricks[c][r].status = 0;
+                    score++;
+                    bricksRemaining--;
+                    console.log("collides with brick c:" + c + " r: "+ r);
+                    bounceOffBrick(bricks[c][r].x, bricks[c][r].y);
+                }
+
+                //actually draw the bricks
+                ctx.beginPath();
+                if(bricks[c][r].status == 1) ctx.rect(brickX, brickY, brickWidth, brickHeight);  //only draw if it hasnt been hit
+                ctx.fillStyle = "#0095DD";
+                ctx.fill();
+                ctx.closePath();
             }
         }
     }
@@ -193,12 +194,8 @@ function checkGameOver(){
 }
 //----------------Draw Method-------------------
 function draw() {
-    console.log("draw");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawBall();
-    //console.log("paddleX: " + paddleX);
-    //console.log("prevPaddleX: " + prevPaddleX);
-    console.log("paddleVelocity: " + paddleVelocity);
     drawPaddle();
     drawBricks();
     drawScore();
